@@ -15,16 +15,18 @@
     <script>
         window.onload = () => {
             let input = document.getElementById("diagram-input");
+            let timer = 0;
 
             const initial_text = "@startuml\n@enduml"
             if (input.value !== "" && input.value !== initial_text) {
-                ProcessInput(input.value);
+                HandleUpdate();
             } else {
                 input.value = initial_text;
             }
 
-            input.oninput = (event) => {
-                ProcessInput(event.target.value);
+            input.oninput = () => {
+                clearTimeout(timer);
+                timer = setTimeout(HandleUpdate, 1000);
             }
         }
 
@@ -90,7 +92,7 @@
         }
 
         async function ProcessInput(InputText) {
-            console.log("Compressing...\n" + InputText)
+            console.log("Compressing...");
             const bytes = await Deflate(InputText);
             const bit_stream = new BitStream(bytes);
             const mapping = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_\n";
@@ -100,7 +102,13 @@
                 result += mapping[bit_stream.read_byte(6)];
             }
 
-            document.getElementById("diagram").src = "https://www.plantuml.com/plantuml/png/" + result;
+            return "https://www.plantuml.com/plantuml/png/" + result;
+        }
+
+        async function HandleUpdate() {
+            const input = document.getElementById("diagram-input").value;
+            const image = document.getElementById("diagram");
+            image.src = await ProcessInput(input);
         }
     </script>
 </head>
