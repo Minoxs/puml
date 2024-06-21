@@ -92,23 +92,32 @@
         }
 
         async function ProcessInput(InputText) {
-            console.log("Compressing...");
+            Status("Compressing...");
             const bytes = await Deflate(InputText);
             const bit_stream = new BitStream(bytes);
             const mapping = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_\n";
 
+            Status("Mapping...");
             let result = "";
             while (bit_stream.size() > 0) {
                 result += mapping[bit_stream.read_byte(6)];
             }
 
+            Status("Generated Link");
             return "https://www.plantuml.com/plantuml/png/" + result;
         }
 
         async function HandleUpdate() {
             const input = document.getElementById("diagram-input").value;
             const image = document.getElementById("diagram");
-            image.src = await ProcessInput(input);
+            const url = await ProcessInput(input);
+
+            Status("Loading Image...");
+            image.src = url;
+        }
+
+        function Status(Text) {
+            document.getElementById("status").innerText = Text;
         }
     </script>
 </head>
@@ -117,10 +126,11 @@
 <div class="grid-container">
     <div>
         <label for="diagram-input">Diagram Definition</label><br>
-        <textarea id="diagram-input" cols="100" rows="50"></textarea>
+        <textarea id="diagram-input" cols="100" rows="50"></textarea><br>
+        <span id="status"></span>
     </div>
     <div>
-        <img id="diagram" src="https://www.plantuml.com/plantuml/png/SoWkIImgAStDuN98pKi1qW00" alt="diagram is here"/>
+        <img id="diagram" src="https://www.plantuml.com/plantuml/png/SoWkIImgAStDuN98pKi1qW00" alt="diagram is here" onload="Status('Done')"/>
     </div>
 </div>
 
