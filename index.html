@@ -29,10 +29,10 @@
             // Setting input handling
             const input = document.getElementById("diagram-input");
             const initial_text = "@startuml\n@enduml"
+
+            input.value = localStorage.getItem("diagram-source") ?? initial_text;
             if (input.value !== "" && input.value !== initial_text) {
                 HandleUpdate();
-            } else {
-                input.value = initial_text;
             }
 
             input.oninput = () => {
@@ -132,6 +132,7 @@
 
             Status("Loading Image...");
             image.src = url;
+            localStorage.setItem("diagram-source", input);
         }
 
         function Status(Text) {
