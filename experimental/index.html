@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Fast PUML Generator</title>
-    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="icon" href="/favicon.png" type="image/png">
     <style>
         input[type="range"] {
             width: 500px;
+        }
+
+        #diagram-input {
+            position: relative;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
         }
 
         .grid-container {
@@ -21,21 +29,24 @@
             font-weight: bold;
         }
     </style>
+    <script id="syntax-highlighter"></script>
     <script>
+        let editor = null;
+
         window.onload = () => {
             let timer = 0;
             let interval = 1000;
 
             // Setting input handling
-            const input = document.getElementById("diagram-input");
+            editor = document.getElementById("diagram-input");
             const initial_text = "@startuml\n@enduml"
 
-            input.value = localStorage.getItem("diagram-source") ?? initial_text;
-            if (input.value !== "" && input.value !== initial_text) {
+            editor.value = localStorage.getItem("diagram-source") ?? initial_text;
+            if (editor.value !== "" && editor.value !== initial_text) {
                 HandleUpdate();
             }
 
-            input.oninput = () => {
+            editor.oninput = () => {
                 clearTimeout(timer);
                 timer = setTimeout(HandleUpdate, interval);
             }
@@ -46,6 +57,8 @@
                 document.getElementById("update-interval-info").innerText = interval;
             }
             document.getElementById("update-interval-info").innerText = interval;
+
+            EnableSyntaxHighlight(document.getElementById("syntax-highlight-checkbox").checked);
         }
 
         async function Deflate(Text) {
@@ -126,7 +139,7 @@
         }
 
         async function HandleUpdate() {
-            const input = document.getElementById("diagram-input").value;
+            const input = editor.value ?? editor.getValue();
             const image = document.getElementById("diagram");
             const url = await ProcessInput(input);
 
@@ -137,6 +150,29 @@
 
         function Status(Text) {
             document.getElementById("status").innerText = Text;
+        }
+
+        function EnableSyntaxHighlight(enable) {
+            if (enable) {
+                let script = document.getElementById("syntax-highlighter");
+                script.type = "text/javascript";
+                script.src = "/lib/ace/ace.js";
+                script.defer = true;
+                script.onload = () => {
+                    editor = ace.edit("diagram-input", {
+                        theme: "ace/theme/monokai",
+                        mode: "ace/mode/puml",
+                        minLines: 50,
+                        maxLines: 50,
+                    });
+
+                    editor.session.on("change", () => {
+                        HandleUpdate();
+                    })
+                };
+            } else if (document.getElementsByClassName("ace_editor").length > 0) {
+                location.reload();
+            }
         }
     </script>
 </head>
@@ -151,7 +187,11 @@
             <input id="update-interval" type="range" min="500" max="5000" step="10" value="1000"/>
             <span id="update-interval-info">1000</span>
         </label><br>
-        <a href="/experimental">Experimental Version</a>
+        <label>
+            <input id="syntax-highlight-checkbox" type="checkbox" onchange="EnableSyntaxHighlight(this.checked)"/>
+            Syntax Highlight (experimental)
+        </label><br>
+        <a href="../">Go Back</a>
     </div>
     <div>
         <img id="diagram" src="https://www.plantuml.com/plantuml/png/SoWkIImgAStDuN98pKi1qW00" alt="diagram is here" onload="Status('Done')"/>
