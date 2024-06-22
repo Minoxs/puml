@@ -1,6 +1,6 @@
-# PUML
+# Fast PUML Generator
 
-Access tool in: https://minoxs.github.io/puml/
+Access tool via: https://puml.mino.one
 
 Documentation is found at: https://plantuml.com/
 
