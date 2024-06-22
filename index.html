@@ -5,6 +5,10 @@
     <title>Fast PUML Generator</title>
     <link rel="icon" href="favicon.png" type="image/png">
     <style>
+        input[type="range"] {
+            width: 500px;
+        }
+
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -13,8 +17,8 @@
             margin-top: 30px;
         }
 
-        input[type="range"] {
-            width: 500px;
+        .pretty-text {
+            font-weight: bold;
         }
     </style>
     <script>
@@ -137,9 +141,9 @@
 </head>
 <body>
 
-<div class="grid-container">
+<div class="grid-container pretty-text">
     <div>
-        <label for="diagram-input">Diagram Definition</label> - <span id="status"></span><br>
+        <label for="diagram-input">Diagram Definition - <span id="status"></span></label><br>
         <textarea id="diagram-input" cols="100" rows="50"></textarea><br>
         <label>
             Update Interval
