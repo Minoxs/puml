@@ -35,7 +35,7 @@
 
         window.onload = () => {
             let timer = 0;
-            let interval = 1000;
+            let interval = localStorage.getItem("update-interval") ?? 1000;
 
             // Setting input handling
             editor = document.getElementById("diagram-input");
@@ -55,10 +55,14 @@
             document.getElementById("update-interval").oninput = (event) => {
                 interval = event.target.value;
                 document.getElementById("update-interval-info").innerText = interval;
+                localStorage.setItem("update-interval", interval);
             }
             document.getElementById("update-interval-info").innerText = interval;
 
-            EnableSyntaxHighlight(document.getElementById("syntax-highlight-checkbox").checked);
+            const syntax_highlight_enable = localStorage.getItem("syntax-highlight");
+            document.getElementById("syntax-highlight-checkbox").checked = syntax_highlight_enable;
+
+            EnableSyntaxHighlight(syntax_highlight_enable);
         }
 
         async function Deflate(Text) {
@@ -153,6 +157,7 @@
         }
 
         function EnableSyntaxHighlight(enable) {
+            localStorage.setItem("syntax-highlight", enable);
             if (enable) {
                 let script = document.getElementById("syntax-highlighter");
                 script.type = "text/javascript";
