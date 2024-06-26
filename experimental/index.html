@@ -52,6 +52,7 @@
             }
 
             // Setting Interval configuration
+            document.getElementById("update-interval").value = interval;
             document.getElementById("update-interval").oninput = (event) => {
                 interval = event.target.value;
                 document.getElementById("update-interval-info").innerText = interval;
@@ -59,7 +60,7 @@
             }
             document.getElementById("update-interval-info").innerText = interval;
 
-            const syntax_highlight_enable = localStorage.getItem("syntax-highlight");
+            const syntax_highlight_enable = localStorage.getItem("syntax-highlight") === true.toString();
             document.getElementById("syntax-highlight-checkbox").checked = syntax_highlight_enable;
 
             EnableSyntaxHighlight(syntax_highlight_enable);
